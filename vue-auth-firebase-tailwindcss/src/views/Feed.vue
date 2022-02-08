@@ -1,3 +1,21 @@
 <template>
-    <h1 class="text-3xl font-bold underline">Feed</h1>
+    <h1>FEED</h1>
 </template>
+
+<script>
+import { useStore } from 'vuex'
+
+export default {
+    setup() {
+        const store = useStore();
+        
+        const logout = () => {
+          store.dispatch('logout')
+        }
+
+        return {
+            logout
+        }
+    }
+}
+</script>

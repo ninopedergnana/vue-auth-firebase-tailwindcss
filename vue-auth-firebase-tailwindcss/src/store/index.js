@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import router from '../router'
 import { auth } from '../firebase'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 
 export default createStore({
     state: {
@@ -17,7 +17,7 @@ export default createStore({
     },
     actions: {
         async register({commit}, details) {
-            const { email, password } = details
+            const { firstName, surname, email, password } = details
             try {
                 await createUserWithEmailAndPassword(auth, email, password)
             } catch (error) {
@@ -34,12 +34,39 @@ export default createStore({
                     case 'auth/weak-password':
                         alert("Weak password, must be at least 6 symbols long!")
                     default:
-                        alert("Something went wrong")
+                        alert("Provide a valid email and password")
                 }
                 return
             }
             commit('SET_USER', auth.currentUser)
             router.push('/')
+        },
+
+        async login({commit}, details) {
+            const { email, password } = details
+            try {
+                await signInWithEmailAndPassword(auth, email, password)
+            } catch (error) {
+                switch(error.code) {
+                    case 'auth/user-not-found':
+                        alert("User not found")
+                        break
+                      case 'auth/wrong-password':
+                        alert("Wrong password")
+                        break
+                      default:
+                        alert("Provide a valid email and password")
+                }
+                return
+            }
+            commit('SET_USER', auth.currentUser)
+            router.push('/')
+        },
+
+        async logout({ commit }) {
+            await signOut(auth)
+            commit('CLEAR_USER')
+            router.push('/login')
         },
 
         fetchUser ({ commit }) {

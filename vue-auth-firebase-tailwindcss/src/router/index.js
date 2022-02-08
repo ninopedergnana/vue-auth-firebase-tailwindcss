@@ -26,14 +26,14 @@ const router = createRouter({
             path: "/login", 
             name: 'Login',
             component: () => import("../views/Login.vue"),
-        },
+        }
     ],
 });
 
 
 router.beforeEach((to, from, next) => {
     if(to.path === '/login' && auth.currentUser) {
-        next('/')
+        next('/feed')
         return
     }
 
